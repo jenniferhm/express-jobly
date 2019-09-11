@@ -1,17 +1,24 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
+const queryStringReader = require("../helpers/queryStringReader");
 
 
 class Company {
 
-  // static async all() {
-  //   const companies = await db.query(
-  //       `SELECT `
-  //   )
-  // }
+  static async filteredGet(query) {
+    let finalQuery = queryStringReader(query);
 
-  static async create({ handle, name, num_employees, description, logo_url}) {
+    const result = await db.query(
+      `${finalQuery.baseQuery}`, finalQuery.queryValues
+    );
+    
+    let companies = result.rows;
+
+    return companies;
+  }
+
+  static async create({ handle, name, num_employees, description, logo_url }) {
     const result = await db.query(
       `INSERT INTO companies (
         handle,
@@ -21,7 +28,7 @@ class Company {
         logo_url)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING handle, name, num_employees, description, logo_url`,
-        [handle, name, num_employees, description, logo_url]
+      [handle, name, num_employees, description, logo_url]
     );
 
     let company = result.rows[0];
@@ -48,11 +55,11 @@ class Company {
     let update = sqlForPartialUpdate("companies", items, key, id)
 
     const result = await db.query(
-      `${update.query}`, 
+      `${update.query}`,
       update.values
     )
-      // don't need to wrap update.values in an array since it's
-      // already an array
+    // don't need to wrap update.values in an array since it's
+    // already an array
     if (result.rows[0].length === 0) {
       throw new ExpressError("Company not found!", 404);
     }
@@ -66,8 +73,8 @@ class Company {
     const result = await db.query(`DELETE
     FROM companies 
     WHERE handle=$1
-    RETURNING handle`, 
-    [handle])
+    RETURNING handle`,
+      [handle])
 
     if (result.rows[0].length === 0) {
       throw new ExpressError("No such company", 404);
@@ -76,10 +83,6 @@ class Company {
     let deleted = "Company deleted";
     return deleted;
   }
-
-
-
-
 }
 
 module.exports = Company;

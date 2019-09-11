@@ -36,4 +36,3 @@ describe("OUTSIDE", function() {
     await db.end();
   });
 })
-
