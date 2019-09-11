@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS companies;
+
 CREATE TABLE companies (
   handle text PRIMARY KEY,
   name text NOT NULL,
@@ -5,3 +7,7 @@ CREATE TABLE companies (
   description text,
   logo_url text
 );
+
+INSERT INTO companies
+  VALUES('apple', 'Apple', 500, 'fruit'),
+        ('ibm', 'IBM', 600, 'blue');
