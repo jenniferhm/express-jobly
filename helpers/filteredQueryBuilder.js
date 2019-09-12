@@ -39,10 +39,18 @@ function companyFilteredQueryBuilder(query) {
 }
 
 function jobFilteredQueryBuilder(query) {
-  const { search, min_salary, max_equity } = query;
+  const { search, min_salary, min_equity } = query;
     
   let queryStrings = [];
   let queryValues = [];
+
+  if (min_salary < 0) {
+    throw new ExpressError("Minimum salary can't be negative", 400);
+  }
+
+  if (min_equity > 1 && min_equity < 0) {
+    throw new ExpressError("Minimum salary can't be negative or over 1", 400);
+  }
 
   if (search) {
     queryValues.push(`%${search}%`);
@@ -54,9 +62,9 @@ function jobFilteredQueryBuilder(query) {
     queryStrings.push(`salary >= $${queryValues.length}`); 
   }
 
-  if (max_equity) {
-    queryValues.push(max_equity);
-    queryStrings.push(`equity <= $${queryValues.length}`);      
+  if (min_equity) {
+    queryValues.push(min_equity);
+    queryStrings.push(`equity >= $${queryValues.length}`);      
   }
 
   let baseQuery = `SELECT title, company_handle FROM jobs`

@@ -46,7 +46,7 @@ class Company {
     )
 
     if (!result.rows[0]) {
-      throw new ExpressError("Company not found!")
+      throw new ExpressError("Company not found!");
     }
     
     let { name, num_employees, description, logo_url } = result.rows[0];
@@ -56,12 +56,12 @@ class Company {
   }
 
   static async patch(items, handle) {
-    let update = sqlForPartialUpdate("companies", items, "handle", handle)
+    let update = sqlForPartialUpdate("companies", items, "handle", handle);
 
     const result = await db.query(
       `${update.query}`,
       update.values
-    )
+    );
     // don't need to wrap update.values in an array since it's
     // already an array
     if (result.rows[0].length === 0) {
@@ -78,7 +78,7 @@ class Company {
     FROM companies 
     WHERE handle=$1
     RETURNING handle`,
-      [handle])
+      [handle]);
 
     if (result.rows[0].length === 0) {
       throw new ExpressError("No such company", 404);

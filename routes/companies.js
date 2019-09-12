@@ -44,7 +44,7 @@ router.get("/:handle", async function (req, res, next) {
   try {
     const handle = req.params.handle;
     const company = await Company.getById(handle);
-    return res.json({ company });
+    return res.json(company);
   } catch (err) {
     return next(err);
   }

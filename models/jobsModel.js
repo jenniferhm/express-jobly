@@ -9,7 +9,7 @@ class Job {
     let finalQuery = jobFilteredQueryBuilder(query);
 
     const result = await db.query(
-      `${finalQuery.baseQuery}`, finalQuery.queryValues
+      finalQuery.baseQuery, finalQuery.queryValues
     );
 
     let jobs = result.rows;
@@ -26,7 +26,7 @@ class Job {
         company_handle,
         date_posted)
         VALUES ($1, $2, $3, $4, current_timestamp)
-        RETURNING title, salary, equity, company_handle, date_posted`,
+        RETURNING title, salary, equity, company_handle, date_posted, id`,
       [title, salary, equity, company_handle]
     );
 
@@ -40,10 +40,10 @@ class Job {
       FROM jobs
       WHERE id=$1`,
       [id]
-    )
+    );
 
     if (!result.rows[0]) {
-      throw new ExpressError("That job does not exist!");
+      throw new ExpressError("That job does not exist!", 404);
     }
 
     let job = result.rows[0];
@@ -51,12 +51,12 @@ class Job {
   }
 
   static async patch(items, id) {
-    let update = sqlForPartialUpdate("jobs", items, "id", id)
+    let update = sqlForPartialUpdate("jobs", items, "id", id);
 
     const result = await db.query(
-      `${update.query}`,
+      update.query,
       update.values
-    )
+    );
 
     if (!result.rows[0]) {
       throw new ExpressError("Job not found!", 404);
@@ -73,7 +73,7 @@ class Job {
     FROM jobs 
     WHERE id=$1
     RETURNING id`,
-      [id])
+      [id]);
 
     if (!result.rows[0]) {
       throw new ExpressError("No such job", 404);
