@@ -31,7 +31,7 @@ describe("OUTSIDE", function () {
   describe("GET /companies", function () {
     test("should return a filtered list of companies based on query string",
       async function () {
-        let result = await request(app).get(`/companies/?search=apple`);
+        let result = await request(app).get(`/companies/?search=App`);
 
         expect(result.body).toEqual({
           "companies": [
@@ -95,14 +95,16 @@ describe("OUTSIDE", function () {
     test("should return updated company",
       async function () {
         let result = await request(app)
-          .put(`/companies/${company1.handle}`)
-          .send({{"num_employees": 50}, "apple", 1});
+          .patch(`/companies/${company1.handle}`)
+          .send({
+            "items": { "num_employees": 500 }
+          });
 
         expect(result.body).toEqual({
           "company": {
             "handle": "apple",
             "name": "Apple",
-            "num_employees": 4000,
+            "num_employees": 500,
             "description": "fruit",
             "logo_url": null
           }
@@ -110,7 +112,17 @@ describe("OUTSIDE", function () {
       })
   })
 
+  describe("DELETE /companies/[handle]", function () {
+    test("should delete specified company",
+      async function () {
+        let result = await request(app)
+          .delete(`/companies/${company1.handle}`)
 
+        expect(result.body).toEqual({ message: "Company deleted" })
+        const allCompanies = await request(app).get(`/companies`);
+        expect(allCompanies.body.companies).toHaveLength(1);
+      })
+  })
 
 
 

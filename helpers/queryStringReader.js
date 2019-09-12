@@ -1,4 +1,4 @@
-function queryStringReader(query) {
+function queryBuilder(query) {
   const { search, min_employees, max_employees } = query;
     
   let queryStrings = [];
@@ -9,7 +9,7 @@ function queryStringReader(query) {
   }
 
   if (search) {
-    queryValues.push(search);
+    queryValues.push(`%${search}%`);
     queryStrings.push(`handle ILIKE $${queryValues.length} OR name ILIKE $${queryValues.length}`);
   }
 
@@ -35,4 +35,4 @@ function queryStringReader(query) {
   return {baseQuery, queryValues};
 }
 
-module.exports = queryStringReader;
+module.exports = queryBuilder;

@@ -1,13 +1,13 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
-const queryStringReader = require("../helpers/queryStringReader");
+const queryBuilder = require("../helpers/queryStringReader");
 
 
 class Company {
 
   static async filteredGet(query) {
-    let finalQuery = queryStringReader(query);
+    let finalQuery = queryBuilder(query);
 
     const result = await db.query(
       `${finalQuery.baseQuery}`, finalQuery.queryValues
@@ -51,14 +51,12 @@ class Company {
     return company;
   }
 
-  static async patch(handle, items, key, id) {
-    let update = sqlForPartialUpdate("companies", items, key, id)
-    let itemsArr = Object.values(items); 
-    itemsArr.push(itemsArr.length);
+  static async patch(items, handle) {
+    let update = sqlForPartialUpdate("companies", items, "handle", handle)
 
     const result = await db.query(
       `${update.query}`,
-      itemsArr
+      update.values
     )
     // don't need to wrap update.values in an array since it's
     // already an array
