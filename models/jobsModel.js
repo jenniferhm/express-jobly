@@ -64,7 +64,6 @@ class Job {
 
     let updatedJob = result.rows[0];
     return updatedJob;
-
   }
 
   static async delete(id) {

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = new express.Router();
 const Company = require("../models/companiesModel");
-const validate = require("jsonschema");
+const jsonschema = require("jsonschema");
 const companySchema = require("../schemas/companySchema");
 const companyPatchSchema = require("../schemas/companyPatchSchema");
 const ExpressError = require("../helpers/expressError");
@@ -18,7 +18,7 @@ router.get("/", async function (req, res, next) {
 
 router.post("/", async function (req, res, next) {
   try {
-    const result = validate.validate(req.body, companySchema);
+    const result = jsonschema.validate(req.body, companySchema);
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
@@ -52,7 +52,7 @@ router.get("/:handle", async function (req, res, next) {
 
 router.patch("/:handle", async function (req, res, next) {
   try {
-    const result = validate.validate(req.body.items, companyPatchSchema);
+    const result = jsonschema.validate(req.body.items, companyPatchSchema);
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);

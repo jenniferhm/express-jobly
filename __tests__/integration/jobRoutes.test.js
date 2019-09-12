@@ -59,7 +59,6 @@ describe("JOB ROUTE TESTS", function () {
         expect(result.statusCode).toEqual(201);
         const allJobs = await request(app).get(`/jobs`);
         expect(allJobs.body.jobs).toHaveLength(3);
-
       })
   })
 

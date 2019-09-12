@@ -1,14 +1,14 @@
 const express = require("express");
 const router = new express.Router();
 const Job = require("../models/jobsModel");
-const validate = require("jsonschema");
+const jsonschema = require("jsonschema");
 const jobSchema = require("../schemas/jobSchema");
 const jobPatchSchema = require("../schemas/jobPatchSchema");
 const ExpressError = require("../helpers/expressError");
 
 router.post("/", async function (req, res, next) {
   try {
-    const result = validate.validate(req.body, jobSchema);
+    const result = jsonschema.validate(req.body, jobSchema);
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
@@ -27,7 +27,7 @@ router.post("/", async function (req, res, next) {
   } catch (err) {
     return next(err);
   }
-})
+});
 
 router.get("/", async function (req, res, next) {
   try {
@@ -50,7 +50,7 @@ router.get("/:id", async function (req, res, next) {
 
 router.patch("/:id", async function (req, res, next) {
   try {
-    const result = validate.validate(req.body.items, jobPatchSchema);
+    const result = jsonschema.validate(req.body.items, jobPatchSchema);
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
@@ -63,7 +63,7 @@ router.patch("/:id", async function (req, res, next) {
   } catch (err) {
     return next(err);
   }
-})
+});
 
 router.delete("/:id", async function (req, res, next) {
   try {
@@ -73,7 +73,7 @@ router.delete("/:id", async function (req, res, next) {
   } catch (err) {
     return next(err);
   }
-})
+});
 
 
 module.exports = router;
