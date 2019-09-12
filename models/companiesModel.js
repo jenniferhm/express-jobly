@@ -37,8 +37,10 @@ class Company {
 
   static async getById(handle) {
     const result = await db.query(
-      `SELECT handle, name, num_employees, description, logo_url
-      FROM companies
+      `SELECT c.handle, c.name, c.num_employees, c.description, c.logo_url, j.title
+      FROM companies AS c
+      INNER JOIN jobs AS j
+      ON c.handle = j.company_handle
       WHERE handle=$1`,
       [handle]
     )
@@ -46,9 +48,11 @@ class Company {
     if (!result.rows[0]) {
       throw new ExpressError("Company not found!")
     }
-
-    let company = result.rows[0];
-    return company;
+    
+    let { name, num_employees, description, logo_url } = result.rows[0];
+    let jobs = result.rows.map(j => j.title);
+    let companyObj = {company: {handle, name, num_employees, description, logo_url, jobs}};
+    return companyObj;
   }
 
   static async patch(items, handle) {

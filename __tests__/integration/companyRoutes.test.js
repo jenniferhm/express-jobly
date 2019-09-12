@@ -7,7 +7,7 @@ const Company = require("../../models/companiesModel")
 let company1;
 
 
-describe("OUTSIDE", function () {
+describe("COMPANY ROUTE TESTS", function () {
   beforeEach(async function () {
     await db.query("DELETE FROM companies");
 
@@ -31,7 +31,7 @@ describe("OUTSIDE", function () {
   describe("GET /companies", function () {
     test("should return a filtered list of companies based on search of 'App'",
       async function () {
-        let result = await request(app).get(`/companies/?search=App`);
+        let result = await request(app).get(`/companies?search=App`);
 
         expect(result.body).toEqual({
           "companies": [
@@ -45,7 +45,7 @@ describe("OUTSIDE", function () {
 
     test("return a filtered list of companies that have min_employees of 100 and max_employees of 700",
       async function () {
-        let result = await request(app).get(`/companies/?min_employees=100&max_employees=700`);
+        let result = await request(app).get(`/companies?min_employees=100&max_employees=700`);
 
         expect(result.body).toEqual({
           "companies": [
@@ -63,7 +63,7 @@ describe("OUTSIDE", function () {
     
       test("return a 400 because max_employees exceeds min_employees",
       async function () {
-        let result = await request(app).get(`/companies/?min_employees=1000&max_employees=10`);
+        let result = await request(app).get(`/companies?min_employees=1000&max_employees=10`);
         
         expect(result.statusCode).toEqual(400);
         expect(result.body).toEqual({

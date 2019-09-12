@@ -5,6 +5,17 @@ const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 
 class Job {
+  static async filteredJobs(query) {
+    let finalQuery = jobFilteredQueryBuilder(query);
+
+    const result = await db.query(
+      `${finalQuery.baseQuery}`, finalQuery.queryValues
+    );
+
+    let jobs = result.rows;
+
+    return jobs;
+  }
 
   static async create({ title, salary, equity, company_handle }) {
     const result = await db.query(
@@ -22,18 +33,7 @@ class Job {
     let job = result.rows[0];
     return job;
   }
-  static async filteredJobs(query) {
-    let finalQuery = jobFilteredQueryBuilder(query);
-
-    const result = await db.query(
-      `${finalQuery.baseQuery}`, finalQuery.queryValues
-    );
-
-    let jobs = result.rows;
-
-    return jobs;
-  }
-
+  
   static async getById(id) {
     const result = await db.query(
       `SELECT title, salary, equity, company_handle, date_posted
