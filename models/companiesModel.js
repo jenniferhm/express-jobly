@@ -1,13 +1,13 @@
 const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
-const queryBuilder = require("../helpers/queryStringReader");
+const { companyFilteredQueryBuilder } = require("../helpers/filteredQueryBuilder");
 
 
 class Company {
 
-  static async filteredGet(query) {
-    let finalQuery = queryBuilder(query);
+  static async filteredCompanies(query) {
+    let finalQuery = companyFilteredQueryBuilder(query);
 
     const result = await db.query(
       `${finalQuery.baseQuery}`, finalQuery.queryValues
@@ -43,7 +43,7 @@ class Company {
       [handle]
     )
 
-    if (result.rows[0].length === 0) {
+    if (!result.rows[0]) {
       throw new ExpressError("Company not found!")
     }
 

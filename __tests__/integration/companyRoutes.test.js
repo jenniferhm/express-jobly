@@ -29,7 +29,7 @@ describe("OUTSIDE", function () {
 
 
   describe("GET /companies", function () {
-    test("should return a filtered list of companies based on query string",
+    test("should return a filtered list of companies based on search of 'App'",
       async function () {
         let result = await request(app).get(`/companies/?search=App`);
 
@@ -42,6 +42,35 @@ describe("OUTSIDE", function () {
           ]
         });
       });
+
+    test("return a filtered list of companies that have min_employees of 100 and max_employees of 700",
+      async function () {
+        let result = await request(app).get(`/companies/?min_employees=100&max_employees=700`);
+
+        expect(result.body).toEqual({
+          "companies": [
+            {
+              "handle": "apple",
+              "name": "Apple",
+            },
+            {
+              "handle": "ibm",
+              "name": "IBM",
+            }
+          ]
+        })
+      })
+    
+      test("return a 400 because max_employees exceeds min_employees",
+      async function () {
+        let result = await request(app).get(`/companies/?min_employees=1000&max_employees=10`);
+        
+        expect(result.statusCode).toEqual(400);
+        expect(result.body).toEqual({
+          "status": 400,
+          "message": "Minimum number of employees is greater than maximum number of employees!"
+        })
+      })
   });
 
   describe("POST /companies", function () {

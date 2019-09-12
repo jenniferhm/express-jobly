@@ -9,7 +9,7 @@ const ExpressError = require("../helpers/expressError");
 
 router.get("/", async function (req, res, next) {
   try {
-    let companies = await Company.filteredGet(req.query);
+    let companies = await Company.filteredCompanies(req.query);
     return res.json({ companies });
   } catch (err) {
     return next(err);
@@ -52,7 +52,7 @@ router.get("/:handle", async function (req, res, next) {
 
 router.patch("/:handle", async function (req, res, next) {
   try {
-    const result = validate.validate(req.body, companyPatchSchema);
+    const result = validate.validate(req.body.items, companyPatchSchema);
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
