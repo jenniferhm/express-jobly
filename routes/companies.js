@@ -27,7 +27,7 @@ router.post("/", async function(req, res, next) {
     const { handle, name, num_employees, description, logo_url } = req.body;
     const company = await Company.create({ handle, name, num_employees, description, logo_url });
 
-    return res.json({company});
+    return res.json({company}, 201);
   } catch (err) {
     return next(err);
   }
@@ -45,12 +45,12 @@ router.get("/:handle", async function(req, res, next) {
 
 router.patch("/:handle", async function(req, res, next) {
   try {
-    const result = validate.validate(req.body, companySchema);
-    if(!result.valid) {
-     let listOfErrors = result.errors.map(error => error.stack);
-     let error = new ExpressError(listOfErrors, 400);
-     return next(error);
-    }
+    // const result = validate.validate(req.body, companySchema);
+    // if(!result.valid) {
+    //  let listOfErrors = result.errors.map(error => error.stack);
+    //  let error = new ExpressError(listOfErrors, 400);
+    //  return next(error);
+    // }
 
     const handle = req.params.handle;
     const { items, key, id } = req.body;

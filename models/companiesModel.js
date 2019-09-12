@@ -53,10 +53,12 @@ class Company {
 
   static async patch(handle, items, key, id) {
     let update = sqlForPartialUpdate("companies", items, key, id)
+    let itemsArr = Object.values(items); 
+    itemsArr.push(itemsArr.length);
 
     const result = await db.query(
       `${update.query}`,
-      update.values
+      itemsArr
     )
     // don't need to wrap update.values in an array since it's
     // already an array
