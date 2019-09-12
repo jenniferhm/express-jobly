@@ -2,36 +2,9 @@ const express = require("express");
 const router = new express.Router();
 const User = require("../models/usersModel");
 const jsonschema = require("jsonschema");
-const userSchema = require("../schemas/userSchema");
+// const userSchema = require("../schemas/userSchema");
 const userPatchSchema = require("../schemas/userPatchSchema");
 const ExpressError = require("../helpers/expressError");
-
-
-router.post("/", async function (req, res, next) {
-  try {
-    const result = jsonschema.validate(req.body, userSchema);
-    if (!result.valid) {
-      let listOfErrors = result.errors.map(error => error.stack);
-      let error = new ExpressError(listOfErrors, 400);
-      return next(error);
-    }
-
-    const { username, password, first_name, last_name, email, photo_url, is_admin } = req.body;
-    const user = await User.create({
-      username,
-      password,
-      first_name,
-      last_name,
-      email,
-      photo_url,
-      is_admin
-    });
-
-    return res.json({ user }, 201);
-  } catch (err) {
-    return next(err);
-  }
-});
 
 router.get("/", async function (req, res, next) {
   try {
