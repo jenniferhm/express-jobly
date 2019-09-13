@@ -78,8 +78,7 @@ class Job {
       throw new ExpressError("No such job", 404);
     }
 
-    let deleted = "Job deleted";
-    return deleted;
+    return "Job deleted";
   }
 }
 

@@ -2,11 +2,7 @@ const db = require("../db");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 const bcrypt = require("bcrypt")
-const {
-  SECRET_KEY,
-  BCRYPT_WORK_FACTOR,
-  DB_URI
-} = require("../config");
+const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
   static async all() {
@@ -20,9 +16,8 @@ class User {
     return users;
   }
 
-  static async create({ username, password, first_name, last_name, email, photo_url, is_admin=false }) {
-    const hashedPw = await bcrypt.hash(
-      password, BCRYPT_WORK_FACTOR);
+  static async create({ username, password, first_name, last_name, email, photo_url, is_admin = false }) {
+    const hashedPw = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
       `INSERT INTO users (
@@ -86,16 +81,14 @@ class User {
       throw new ExpressError("No such username", 404);
     }
 
-    let deleted = "User deleted";
-    return deleted;
+    return "User deleted";
   }
 
   static async authenticate(username, password) {
-    const result = await db.query(
-      `SELECT password FROM users WHERE username = $1`,
-      [username]);
-      const user = result.rows[0];
-      return user && await bcrypt.compare(password, user.password);
+    const result = await db.query(`SELECT password FROM users WHERE username = $1`, [username]);
+    const user = result.rows[0];
+    const isAuthenticated = await bcrypt.compare(password, user.password);
+    return user && isAuthenticated;
   }
 }
 

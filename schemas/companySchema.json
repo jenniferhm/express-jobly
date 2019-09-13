@@ -52,7 +52,7 @@
     },
     "logo_url": {
       "$id": "#/properties/logo_url",
-      "type": "null",
+      "type": "string",
       "title": "The Logo_url Schema",
       "default": null,
       "examples": [

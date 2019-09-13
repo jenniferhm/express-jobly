@@ -5,9 +5,10 @@ const jsonschema = require("jsonschema");
 const companySchema = require("../schemas/companySchema");
 const companyPatchSchema = require("../schemas/companyPatchSchema");
 const ExpressError = require("../helpers/expressError");
+const { authenticateJWT, ensureLoggedIn, ensureIsAdmin } = require("../helpers/auth");
 
 
-router.get("/", async function (req, res, next) {
+router.get("/", authenticateJWT, ensureLoggedIn, async function (req, res, next) {
   try {
     let companies = await Company.filteredCompanies(req.query);
     return res.json({ companies });
@@ -16,9 +17,10 @@ router.get("/", async function (req, res, next) {
   }
 })
 
-router.post("/", async function (req, res, next) {
+router.post("/", authenticateJWT, ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
   try {
     const result = jsonschema.validate(req.body, companySchema);
+
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
@@ -40,9 +42,9 @@ router.post("/", async function (req, res, next) {
   }
 })
 
-router.get("/:handle", async function (req, res, next) {
+router.get("/:handle", authenticateJWT, ensureLoggedIn, async function (req, res, next) {
   try {
-    const handle = req.params.handle;
+    const { handle } = req.params;
     const company = await Company.getById(handle);
     return res.json(company);
   } catch (err) {
@@ -50,15 +52,16 @@ router.get("/:handle", async function (req, res, next) {
   }
 })
 
-router.patch("/:handle", async function (req, res, next) {
+router.patch("/:handle", authenticateJWT, ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
   try {
     const result = jsonschema.validate(req.body.items, companyPatchSchema);
+
     if (!result.valid) {
       let listOfErrors = result.errors.map(error => error.stack);
       let error = new ExpressError(listOfErrors, 400);
       return next(error);
     }
-    const handle = req.params.handle;
+    const { handle } = req.params;
     const { items } = req.body;
     const company = await Company.patch(items, handle);
     return res.json({ company });
@@ -67,9 +70,9 @@ router.patch("/:handle", async function (req, res, next) {
   }
 })
 
-router.delete("/:handle", async function (req, res, next) {
+router.delete("/:handle", authenticateJWT, ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
   try {
-    const handle = req.params.handle;
+    const { handle } = req.params;
     const message = await Company.delete(handle);
     return res.json({ message });
   } catch (err) {
@@ -79,5 +82,3 @@ router.delete("/:handle", async function (req, res, next) {
 
 
 module.exports = router;
-
-
